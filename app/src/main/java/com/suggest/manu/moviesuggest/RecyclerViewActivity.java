@@ -1,5 +1,7 @@
 package com.suggest.manu.moviesuggest;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,13 +12,19 @@ import android.view.MenuItem;
 import com.suggest.manu.moviesuggest.util.ManuAdapter;
 import com.suggest.manu.moviesuggest.util.Movie;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class RecyclerViewActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ManuAdapter adapter;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,22 +34,27 @@ public class RecyclerViewActivity extends AppCompatActivity {
     }
 
     private void initializeComponents() {
+        progressDialog = new ProgressDialog(this);
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        adapter = new ManuAdapter(fakeData());
+        adapter = new ManuAdapter(new ArrayList<Movie>());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        //adapter.notifyDataSetChanged();
-    }
 
-    private List<Movie> fakeData() {
-        List<Movie> data = new ArrayList<>();
-        Movie movie = new Movie();
+
+
+
+       /* Movie movie = new Movie();
         movie.setImage("http://pics.filmaffinity.com/Los_siete_samur_is-914194246-main.jpg");
         for (int i = 0; i < 10; i++) {
-            data.add(movie);
-        }
-        return data;
+            adapter.add(movie);
+        }*/
+
+        new CargarLibros().execute("");
+
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -63,5 +76,46 @@ public class RecyclerViewActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private class CargarLibros extends AsyncTask<String, Integer, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setMessage("Cargando...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            try {
+                Document document = Jsoup.connect("https://www.goodreads.com/list/show/264.Books_That_Everyone_Should_Read_At_Least_Once").get();
+                Elements elements = document.select("a.bookTitle[itemprop=url]");
+                Elements elements1 = document.select("img.bookSmallImg");
+                for (Element element : elements1) {
+                    Movie book = new Movie();
+                    //book.setImage(element.attr("src"));
+                    book.setImage("http://pics.filmaffinity.com/The_Farewell_Party-415614831-main.jpg");
+                    adapter.add(book);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            adapter.notifyDataSetChanged();
+        }
     }
 }

@@ -26,7 +26,7 @@ public class RectangleImageView extends ImageView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
         //TODO: Mejorar esto para que no se descuadre
-        Integer width = getWidth();
+        Integer width = getMeasuredWidth();
         Double height = width * 1.5;
         setMeasuredDimension(width, height.intValue());
     }
