@@ -4,7 +4,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,7 +39,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         adapter = new ManuAdapter(new ArrayList<Movie>());
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
 
@@ -98,7 +98,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
                 for (Element element : elements1) {
                     Movie book = new Movie();
                     //book.setImage(element.attr("src"));
-                    book.setImage("http://pics.filmaffinity.com/The_Farewell_Party-415614831-main.jpg");
+                    book.setImage("http://ia.media-imdb.com/images/M/MV5BMTkxMjgwMDM4Ml5BMl5BanBnXkFtZTgwMTk3NTIwNDE@._V1_SY317_CR0,0,214,317_AL_.jpg");
                     adapter.add(book);
                 }
             } catch (IOException e) {
